@@ -1,0 +1,244 @@
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+  <div class="title">
+    <h2>Dashboard</h2>
+  </div>
+  <!--Graphs-->
+      <div class="section group">
+        <div class="col span_1_of_4">
+          <div *ngIf="GetNumberofEmployees()" class="card">
+            <h2 class="card-heading">Employees</h2>
+              <canvas baseChart
+                      [data]=[GetNumberofEmployees()]
+                      [chartType]="doughnutChartType"
+                      [colors]="donutColors"
+              ></canvas>
+            <p> {{"Total:"+ GetNumberofEmployees()}} </p>
+          </div>
+        </div>
+        <div class="col span_1_of_4">
+          <div *ngIf="GetNumberofDepartments()" class="card">
+            <h2 class="card-heading">Departments</h2>
+              <canvas baseChart
+                      [data]=[GetNumberofDepartments()]
+                      [chartType]="doughnutChartType"
+                      [colors]="donutColors"
+              ></canvas>
+            <p> {{"Total:"+GetNumberofDepartments()}} </p>
+          </div>
+        </div>
+        <div class="col span_1_of_4">
+          <div *ngIf="GetNumberofTasks()" class="card">
+            <h2 class="card-heading">Tasks</h2>
+              <canvas baseChart
+                      [data]=[GetNumberofTasks()]
+                      [chartType]="doughnutChartType"
+                      [colors]="donutColors"
+              ></canvas>
+            <p> {{"Total:"+ GetNumberofTasks()}} </p>
+          </div>
+        </div>
+        <div class="col span_1_of_4">
+          <div *ngIf="GetNumberofRoles()" class="card">
+            <h2 class="card-heading">Roles</h2>
+              <canvas baseChart
+                      [data]=[GetNumberofRoles()]
+                      [chartType]="doughnutChartType"
+                      [colors]="donutColors"
+              ></canvas>
+            <p> {{"Total:"+ GetNumberofRoles()}} </p>
+          </div>
+        </div>
+        </div>
+        <!--Tables-->
+        <div class="table-container">
+          <div class="section group">
+            <!--table-employee-->
+            <div class="col span_1_of_3">
+              <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">First Name</th>
+                      <th scope="col">Last Name</th>
+                      <th scope="col">Details</th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let employeee of employees">
+                    <td class="row-emp">{{employeee.emp_firstName}}</td>
+                    <td class="row-emp">{{employeee.emp_lastName}}</td>
+                    <td class="row-emp"><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#empDetail"
+                        [class.selected]="employeee === selectedEmp"
+                        (click)="empSelect(employeee)">Details</button></td>
+                </tbody>
+              </table>
+            </div>
+             <!--table-department-->
+            <div class="col span_1_of_3">
+              <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Department name</th>
+                        <th scope="col">Details</th>
+                    </tr>
+                </thead>
+                    <tbody *ngFor="let dep of departments"  class="row-table">
+                        <th class="row-dep"scope ="row">{{dep.department_name}}</th>
+                        <td class="row-dep"><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#DepDetail"
+                            [class.selected]="dep===selectedDepartment"
+                            (click)="DepSelect(dep)">Details
+                        </button></td>
+                </tbody>
+              </table>
+              </div>
+              <!--table-tasks-->
+              <div class="col span_1_of_3">
+                <table class="table">
+                  <thead>
+                     <tr>
+                         <th scope="col">Name</th>
+                         <th scope="col">Details</th>
+                     </tr>
+                 </thead>
+                 <tbody *ngFor="let Task of tasks">
+                     <th class="row-task"scope="row">{{Task.name}}</th>
+                     <td class="row-task"><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#TaskDetail"
+                                 [class.selected]="Task === selectedTask"
+                                 (click)="onSelect(Task)">Details</button>
+                     </td>
+                 </tbody>
+                </table>
+              </div>
+              <!--Modals-->
+               <!--Modal Department-->
+               <div class="modal fade" id="DepDetail" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);" >
+                <div class="modal-dialog">
+                    <div class="modal-content">       
+                         <div class="modal-body" *ngIf="selectedDepartment">
+                          <div class="modal-header">
+                            <h4 class="modal-title"></h4>
+                              <button mat-button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h2  style="font-size:20px; margin-left: 0px; margin-top: 0px;">{{selectedDepartment.department_name}} details</h2>
+                          </div>              
+                                <p class="text-muted" style="font-size:20px;margin-top: 10px;">Department id:</p>
+                                <input style="font-size: 15px;"class="form-control" #editedD_id type="number"[(ngModel)]="selectedDepartment.department_id" placeholder="Department id"/>
+                                <br>
+                                <p class="text-muted" style="font-size:20px">Department name:</p>
+                                <input style="font-size: 15px;" class="form-control" #editedD_name type="text"[(ngModel)]="selectedDepartment.department_name" placeholder="Department name"/>
+                                <br>
+                                <p class="text-muted" style="font-size:20px">Department location:</p>
+                                <input style="font-size: 15px;" class="form-control" #editedD_location type="text"[(ngModel)]="selectedDepartment.department_location" placeholder="Department location"/>
+                                <br>
+                                <p class="text-muted" style="font-size:20px">Employees:</p>
+                                <select style="font-size: 15px;" #editedD_employees type="text" [(ngModel)]="selectedDepartment.employees" class="form-control">
+                                  <option *ngFor="let item of employees" [value]="item.emp_firstName">
+                                    {{item.emp_firstName}}
+                                  </option>
+                                </select>      
+                        </div>
+                      </div>
+                  </div>
+              </div>
+             <!--Modal Employee-->
+             <div class="modal fade" id="empDetail" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+              <div class="modal-dialog">
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                      <div class="modal-body" *ngIf="selectedEmp">
+                          <div class="modal-header">
+                              <h4 class="modal-title"></h4>
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h2  style="font-size:20px; margin-left: 0px; margin-top: 0px;"> Details</h2>
+                          </div>
+                          <p class="text-muted" style="font-size:20px">ID:</p>
+                          <input style="font-size: 15px;" class="form-control" type="text" [(ngModel)]="selectedEmp.emp_id"/>
+                          <br>
+                          <p class="text-muted" style="font-size:20px">First Name:</p>
+                          <input style="font-size: 15px;" class="form-control" type="text" [(ngModel)]="selectedEmp.emp_firstName"/>
+                          <br>
+                          <p class="text-muted" style="font-size:20px">Last Name:</p>
+                          <input style="font-size: 15px;" class="form-control" type="text" [(ngModel)]="selectedEmp.emp_lastName"/>
+                          <br>
+                          <br>
+                          <p class="text-muted" style="font-size:20px">Gender:</p>
+                          <div *ngIf="selectedEmp.emp_gender == 'Male'">
+                              <select [(ngModel)]="selectedEmp.emp_gender" style="font-size: 15px;" class="form-control">
+                                  <option value="Male" selected>Male</option>
+                                  <option value="Female">Female</option>
+                                  <option value="Other">Other</option>
+                              </select>
+                          </div>
+                          <div *ngIf="selectedEmp.emp_gender == 'Female'">
+                              <select [(ngModel)]="selectedEmp.emp_gender" style="font-size: 15px;" class="form-control">
+                                  <option value="Male">Male</option>
+                                  <option value="Female" selected>Female</option>
+                                  <option value="Other">Other</option>
+                              </select>
+                          </div>
+                          <div *ngIf="selectedEmp.emp_gender == 'Other'">
+                              <select [(ngModel)]="selectedEmp.emp_gender" style="font-size: 15px;" class="form-control">
+                                  <option value="Male">Male</option>
+                                  <option value="Female">Female</option>
+                                  <option value="Other" selected>Other</option>
+                              </select>
+                          </div>
+                          <br>
+                          <p class="text-muted" style="font-size:20px">Birthday (mm/dd/yyyy):</p>
+                          <input style="font-size: 15px;" class="form-control" type="date" [ngModel] ="selectedEmp.emp_birthDay | date:'yyyy-MM-dd'" (ngModelChange)="selectedEmp.emp_birthDay = $event">
+                          <br>
+                          <p class="text-muted" style="font-size:20px">Email:</p>
+                          <input style="font-size: 15px;" class="form-control" [(ngModel)]="selectedEmp.emp_email"/>
+                          <br>
+                          <p class="text-muted" style="font-size:20px">Role:</p>
+                          <!-- <p >{{selectedEmp.emp_role}}</p> -->
+                          <select type="text" [(ngModel)]="selectedEmp.emp_role" style="font-size: 15px;" class="form-control">
+                              <option *ngFor="let role of roles" [value]="role.name">
+                                  {{role.name}}
+                              </option>
+                          </select>
+                          <br>
+                          <p class="text-muted" style="font-size:20px">Department:</p>
+                          <select type="text" [(ngModel)]="selectedEmp.emp_department" style="font-size: 15px;" class="form-control">
+                              <option *ngFor="let item of departments" [value]="item.department_name">
+                                  {{item.department_name}}
+                              </option>
+                          </select>
+                      </div>
+                  </div>
+              </div>
+          </div>
+            <!--Modal Tasks-->
+            <div class="modal fade" id="TaskDetail" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-body" *ngIf="selectedTask">
+                    <div class="modal-header">
+                      <h4 class="modal-title"></h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <p class="text-muted" style="font-size:20px; margin-left: 0px; margin-top: 0px;">Task-Details: {{selectedTask.name | uppercase}}</p>
+                    </div>                    
+                      <p class="text-muted" style="font-size:20px">Name: </p>
+                      <input style="font-size: 15px;" class="form-control" [(ngModel)]="selectedTask.name" placeholder="Enter task name"/>
+                      <br>
+                      <p>Description: </p>
+                      <input style="font-size: 15px;" class="form-control" [(ngModel)]="selectedTask.description" placeholder="Enter task description"/>
+                      <br>
+                      <p>Deadline:</p>
+                      <input style="font-size: 15px;" class="form-control" type="date" [(ngModel)]="selectedTask.deadline" placeholder="Enter task Deadline"/>
+                      <br>
+                      <p class="text-muted" style="font-size:20px">Department:</p>
+                      <select type="text" [(ngModel)]="selectedTask.departmentName" style="font-size: 15px;" class="form-control">
+                          <option *ngFor="let item of departments" [value]="item.department_name">
+                              {{item.department_name}}
+                          </option>
+                      </select>
+                      <br>
+                      <p class="text-muted" style="font-size:20px">Employee(s): {{selectedTask.employeesName}}</p>
+                      <br>
+                </div>
+            </div>
+            </div>
+            </div>
+        </div>
+        </div>
+
+
+

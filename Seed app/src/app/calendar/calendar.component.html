@@ -1,0 +1,12 @@
+<div class='app'>
+  <div class='app-top'>
+    <button (click)='toggleVisible()'>toggle visible</button>
+    (also, click a date/time to add an event)
+  </div>
+  <full-calendar  #fullcalendar
+                  [editable]="true" [events]="calendarEvents" [height]="options.height"
+                   [header]="options.header" [titleFormat] ="options.titleFormat" [customButtons]="options.customButtons"
+                   (dateClick)="dateClick($event)" (eventDragStop)="eventDragStop($event)"
+                   [plugins]="options.plugins" (eventClick)="eventClick($event)"
+                   [columnHeaderHtml]="options.columnHeaderHtml"></full-calendar>
+</div>

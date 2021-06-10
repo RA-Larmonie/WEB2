@@ -1,0 +1,183 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<!--Display the list of task-->
+<div class="task_container">
+  <table class="headerTable">
+      <tr>
+          <td><h2>Task</h2></td>
+          <!--Add function-->
+          <div class="button-add">
+            <td><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#taskAdd">+</button></td>
+          </div>
+          <!--Search function-->
+          <td>
+            <div class="form-group has-feedback has-search">
+              <span class="glyphicon glyphicon-search form-control-feedback"></span>
+              <input type="text" class="form-control" name="search" [(ngModel)]="searchTerm" autocomplete="off" placeholder="Searching for a Task by name">
+            </div>
+          </td>
+      </tr>
+  </table>
+  <!--Table-->
+  <table class="table">
+       <thead>
+          <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Deadline</th>
+              <th scope="col">Details</th>
+              <th scope="col">Delete</th>
+          </tr>
+      </thead>
+      <tbody *ngFor="let task of filterTask">
+          <th class="row-table" scope="row">{{task.name}}</th>
+          <td class="row-table" >{{task.description}}</td>
+          <td class="row-table" >{{task.deadline}}</td>
+          <td class="row-table"><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#taskDetail"
+                      [class.selected]="task === selectedTask"
+                      (click)="onSelect(task)">Details</button>
+          </td>
+          <td><button (click)="removeTask(task.id);" class="btn btn-light btn-outline-dark"><i class="glyphicon glyphicon-trash"></i></button></td>
+      </tbody>
+  </table>
+</div>
+<!-- Modal For Creating new Task-->
+<div class="modal fade" id="taskAdd" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <form #taskForm="ngForm" [formGroup]="this.form"  ng-submit="addTask(taskForm)"> <!--(ngSubmit)="addTask()" -->
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add New Task</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted" style="font-size:20px">Name:</p>
+                  <div [ngClass]="{'has-error' : form.get('name').errors && (form.get('name').touched || form.get('name').dirty)}">
+                    <input style="font-size: 15px;" class="form-control" #taskName formControlName="name" type="text" placeholder="Task name"/>
+                    <span class="help-block" *ngIf="form.get('name').errors && (form.get('name').touched || form.get('name').dirty)">
+                      <span *ngIf="form.get('name').errors?.required">This Field is mandatory</span>
+                      <span *ngIf="form.get('name').errors?.minlength">Minimum 2 Characters</span>
+                    </span>
+                  </div>
+                  <br>
+                    <p class="text-muted" style="font-size:20px">Description:</p>
+                  <div [ngClass]="{'has-error' : form.get('description').errors && (form.get('description').touched || form.get('description').dirty)}">
+                    <input style="font-size: 15px;" class="form-control"#taskDescription formControlName="description" type="text" placeholder="Task description"/>
+                    <span class="help-block" *ngIf="form.get('description').errors && (form.get('description').touched || form.get('description').dirty)">
+                      <small data-error="wrong" data-success="right" *ngIf="form.get('description').errors?.required">This Field is mandatory</small>
+                      <small data-error="wrong" data-success="right" *ngIf="form.get('description').errors?.minlength">Minimum 4 Characters</small>
+                    </span>
+                  </div>
+                  <br>
+                    <p class="text-muted" style="font-size:20px">Deadline:</p><!-- pipe date for api | YMMV -->
+                  <div [ngClass]="{'has-error' : form.get('deadline').errors && (form.get('deadline').touched || form.get('deadline').dirty)}">
+                    <input style="font-size: 15px;" class="form-control"#taskDeadline formControlName="deadline" type="date" placeholder="Task deadline"/>
+                    <span class="help-block" *ngIf="form.get('deadline').errors && (form.get('deadline').touched || form.get('deadline').dirty)">
+                      <small data-error="wrong" data-success="right" *ngIf="form.get('deadline').errors?.required">This Field is mandatory</small>
+                    </span>
+                  </div>
+                  <br>
+                    <p class="text-muted" style="font-size:20px">Department:</p>
+                    <div [ngClass]="{'has-error' : form.get('departmentName').errors && (form.get('departmentName').touched || form.get('departmentName').dirty)}">
+                    <select #taskDepartmentName type="text" style="font-size: 15px;" formControlName="departmentName" class="form-control">
+                        <option *ngFor="let item of departments" [value]="item.department_name">      <!--*ngFor="let item of depNames" [value]="item"-->
+                            {{item.department_name}}                                                  <!--{{item}}-->
+                        </option>
+                    </select>
+                      <span class="help-block" *ngIf="form.get('departmentName').errors && (form.get('departmentName').touched || form.get('departmentName').dirty)">
+                        <small data-error="wrong" data-success="right" *ngIf="form.get('departmentName').errors?.required">This Field is mandatory</small>
+                      </span>
+                    </div>
+                  <br>
+                    <p class="text-muted" style="font-size:20px">Employee:</p>
+                  <div [ngClass]="{'has-error' : form.get('departmentEmployees').errors && (form.get('departmentEmployees').touched || form.get('departmentEmployees').dirty)}">
+                    <select #taskEmployeeName formControlName="departmentEmployees" type="text" style="font-size: 15px;" class="form-control">  <!--multiple="multiple"-->   <!--*ngIf="taskDepartmentName.value = emp.department_name"-->
+                        <option *ngFor="let emp of departments" [value]="emp.employees">
+                            <!--<ng-container *ngIf="emp.department_name == taskDepartmentName.value">-->
+                          {{emp.employees}}
+                            <!--</ng-container>-->
+                        </option>
+                    </select>
+                    <span class="help-block" *ngIf="form.get('departmentEmployees').errors && (form.get('departmentEmployees').touched || form.get('departmentEmployees').dirty)">
+                   <small data-error="wrong" data-success="right" *ngIf="form.get('departmentEmployees').errors?.required">This Field is mandatory</small>
+                    </span>
+                  </div>
+                  <br>
+                    <div class="modal-footer"> <!--(click)="addTask(taskName.value, taskDescription.value, taskDeadline.valueAsDate, taskDepartmentName.value, taskEmployeeName.value)"-->
+                        <button [disabled]="form.invalid || form.pristine" type="button" (click)="addTask(taskName.value, taskDescription.value, taskDeadline.value, taskDepartmentName.value, taskEmployeeName.value)" style="width: 150px;text-align: center; "class="btn btn-success" data-dismiss="modal" >Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Modal For Updating Task -->
+<div class="modal fade" id="taskDetail" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+  <form [formGroup]="this.form">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body" *ngIf="selectedTask">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="text-muted" style="font-size:20px; margin-left: 0px; margin-top: 0px;">Task-Details: {{selectedTask.name | uppercase}}</h2>
+                </div>
+                <p class="text-muted" style="font-size:20px">Name: </p>
+              <div [ngClass]="{'has-error' : form.get('name').errors && (form.get('name').touched || form.get('name').dirty)}">
+                <input style="font-size: 15px;" class="form-control" #editedT_name [(ngModel)]="selectedTask.name" formControlName="name" placeholder="Enter task name"/>
+                <span class="help-block" *ngIf="form.get('name').errors && (form.get('name').touched || form.get('name').dirty)">
+                  <span *ngIf="form.get('name').errors?.required">This Field is mandatory</span>
+                  <span *ngIf="form.get('name').errors?.minlength">Minimum 2 Characters</span>
+                </span>
+              </div>
+                <br>
+                <p class="text-muted" style="font-size:20px">Description: </p>
+              <div [ngClass]="{'has-error' : form.get('description').errors && (form.get('description').touched || form.get('description').dirty)}">
+                <input style="font-size: 15px;" class="form-control" #editedT_description [(ngModel)]="selectedTask.description" formControlName="description" placeholder="Enter task description"/>
+                  <span class="help-block" *ngIf="form.get('description').errors && (form.get('description').touched || form.get('description').dirty)">
+                      <small data-error="wrong" data-success="right" *ngIf="form.get('description').errors?.required">This Field is mandatory</small>
+                      <small data-error="wrong" data-success="right" *ngIf="form.get('description').errors?.minlength">Minimum 4 Characters</small>
+                  </span>
+              </div>
+                <br>
+                <p class="text-muted" style="font-size:20px">Deadline:</p>
+              <div [ngClass]="{'has-error' : form.get('deadline').errors && (form.get('deadline').touched || form.get('deadline').dirty)}">
+                <input style="font-size: 15px;" class="form-control" #editedT_date type="date" formControlName="deadline" [(ngModel)]="selectedTask.deadline" placeholder="Enter task Deadline"/>
+                <span class="help-block" *ngIf="form.get('deadline').errors && (form.get('deadline').touched || form.get('deadline').dirty)">
+                  <small data-error="wrong" data-success="right" *ngIf="form.get('deadline').errors?.required">This Field is mandatory</small>
+                </span>
+              </div>
+                <br>
+                <p class="text-muted" style="font-size:20px">Department:</p>
+              <div [ngClass]="{'has-error' : form.get('departmentName').errors && (form.get('departmentName').touched || form.get('departmentName').dirty)}">
+                <select style="font-size: 15px;" class="form-control" #editedT_department type="text" formControlName="departmentName" [(ngModel)]="selectedTask.departmentName">
+                    <option *ngFor="let item of departments" [value]="item.department_name">
+                        {{item.department_name}}
+                    </option>
+                </select>
+                <span class="help-block" *ngIf="form.get('departmentName').errors && (form.get('departmentName').touched || form.get('departmentName').dirty)">
+                  <small data-error="wrong" data-success="right" *ngIf="form.get('departmentName').errors?.required">This Field is mandatory</small>
+                </span>
+              </div>
+                <br>
+                <p class="text-muted" style="font-size:20px">Employee:</p>
+                <div [ngClass]="{'has-error' : form.get('departmentEmployees').errors && (form.get('departmentEmployees').touched || form.get('departmentEmployees').dirty)}">
+                    <select style="font-size: 15px;" class="form-control" #editedT_employee formControlName="departmentEmployees" type="text" [(ngModel)]="selectedTask.employeesName">  <!--*ngIf="taskDepartmentName.value = emp.department_name"-->
+                        <option *ngFor="let emp of departments" [value]="emp.employees">
+                            {{emp.employees}}
+                        </option>
+                    </select>
+                  <span class="help-block" *ngIf="form.get('departmentEmployees').errors && (form.get('departmentEmployees').touched || form.get('departmentEmployees').dirty)">
+                   <small data-error="wrong" data-success="right" *ngIf="form.get('departmentEmployees').errors?.required">This Field is mandatory</small>
+                    </span>
+                </div>
+                <br>
+                <div class="modal-footer">
+                    <button type="button" [disabled]="form.invalid || form.pristine" (click)="editTask(editedT_name.value, editedT_description.value, editedT_date.value, editedT_department.value, editedT_employee.value)" style="width: 150px;text-align: center; "class="btn btn-success" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</div>

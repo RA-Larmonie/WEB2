@@ -1,0 +1,106 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="emp_container">
+  <!--Header table-->
+  <table class="headerTable">
+    <tr>
+      <td>
+        <div class="title">
+          <h2>Roles</h2>
+        </div>
+      </td>
+      <!--Add function-->
+      <div class="button-add">
+        <td><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#roleAdd">+</button></td>
+      </div>
+      <!--Search function-->
+      <td>
+        <div class="form-group has-feedback has-search" style="margin-top: 15px;">
+          <span class="glyphicon glyphicon-search form-control-feedback"></span>
+          <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off" placeholder="&#61442;  Searching for roles  by name"/>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <!--Table roles-->
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Department</th>
+        <th scope="col">Details</th>
+        <th scope="col">Delete</th>
+      </tr>
+      </thead>
+      <tbody *ngFor="let role of roles  | filter:searchText">
+      <th class="row-table" scope="row">{{role.key}}</th>
+      <td class="row-table">{{role.name}}</td>
+      <td class="row-table">{{role.department}}</td>
+      <td class="row-table"><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#roleDetail"
+                  [class.selected]="role === selectedRole"
+                  (click)="getRoleById(role.key)">Details</button></td>
+      <!--Remove-->
+      <td><button (click)="deleteRole(role.key);" class="btn btn-light btn-outline-dark"><i class="glyphicon glyphicon-trash"></i></button></td>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- Modal add -->
+<div class="modal fade" id="roleAdd" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Employee</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" required [(ngModel)]="role.name" name="name">
+          </div>
+          <div class="form-group">
+            <label for="age">Department</label>
+            <input type="text" class="form-control" id="age" required [(ngModel)]="role.department" name="age">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Submit</button>
+          </div>
+        </form>
+      </div>
+      <div [hidden]="!submitted">
+        <h4>You submitted successfully!</h4>
+      </div>
+    </div>
+  </div>
+</div>
+<!--</div>-->
+<!-- Modal Detail-->
+<div class="modal fade" id="roleDetail" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);" >
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-body" *ngIf="selectedRole">
+        <div class="modal-header">
+          <h4 class="modal-title">ID: {{selectedRole.key}}</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h2 style="font-size:20px; margin-left: 0px; margin-top: 0px;" class="text-muted" style="font-size:20px"> {{selectedRole.name}} details </h2>
+        </div>
+        <p class="text-muted" style="font-size:20px"> Name:</p>
+        <input #edited_name  style="font-size: 15px;"class="form-control" [(ngModel)]="selectedRole.name" placeholder={{selectedRole.name}} />
+        <br>
+        <br>
+        <p class="text-muted" style="font-size:20px">Department:</p>
+        <select  #edited_department type="text" style="font-size: 15px;" class="form-control" [(ngModel)]="selectedRole.department" >
+          <option *ngFor="let item of departments" [value]="item.department_name">
+            {{item.department_name}}
+          </option>
+        </select>
+        <br>
+        <br>
+      <button type="button"  style="width: 150px;text-align: center;" class="btn btn-success" data-dismiss="modal" (click)="updateRole(selectedRole.key, edited_name.value, edited_department.value )">Submit</button>
+    </div>
+  </div>
+</div></div>

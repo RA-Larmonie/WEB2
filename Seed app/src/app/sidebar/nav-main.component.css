@@ -1,0 +1,54 @@
+@import '~bootstrap/dist/css/bootstrap.min.css'; 
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+  /* background: #23384d; */
+  background-color: #101820FF;
+  color:white
+}
+
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.main-content
+{
+  background-color: white;
+}
+.mat-toolbar
+{
+  background-color: #101820FF;
+  COLOR:white;
+  
+}
+
+.sidenav-item
+{
+  font-size: large;
+}
+.item:hover
+{
+  background-color: #006B38FF;;
+  color:white;
+}
+.item
+{
+  border-bottom: 1px solid #bdb8d7;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.menu-icon:hover
+{
+   background-color:#006B38FF ;
+}
+
+

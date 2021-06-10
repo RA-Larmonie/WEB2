@@ -1,0 +1,123 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <div class="dep-container">
+      <table>
+        <tr>
+          <td>
+              <div class="Title">
+                <h2>Departments</h2>
+              </div>
+          </td>
+          <td>
+            <!--Add function-->
+            <div class="button-add">
+              <button class="btn btn-light btn-outline-dark " data-toggle="modal" data-target="#depAdd">
+                +
+              </button>
+            </div>
+          </td>
+          <!--Search function-->
+          <td>
+            <div class="form-group has-feedback has-search" style="margin-top: 15px;">
+              <span class="glyphicon glyphicon-search form-control-feedback"></span>
+              <input class="form-control" type="text" name="search" [(ngModel)]="searchTerm" autocomplete="off" placeholder="&#61442;  Searching for a department by name"/>
+            </div>           
+          </td>
+        </tr>
+      </table>
+      <!--table-->
+      <table class="table" >
+        <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Department name</th>
+          <th scope="col">Department location</th>
+          <th scope="col">Details</th>
+          <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody *ngFor="let department of filterDepartments"  class="row-table">
+        <th  class="row-table" scope ="row">{{department.department_id}}</th>
+        <th  class="row-table" scope ="row">{{department.department_name}}</th>
+        <th  class="row-table" scope ="row">{{department.department_location}}</th>
+        <th class="row-table"   ><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#DepDetail"
+                    [class.selected]="department===selectedDepartment"
+                    (click)="DepSelect(department)">Details
+        </button></th>
+        <!--Delete-->
+        <td><button  (click) ="removeDepartments(department.key);" class="btn btn-light btn-outline-dark"><i class="glyphicon glyphicon-trash"></i></button></td>
+        </tbody>
+      </table>
+    </div>
+    <!--Modal add-->
+<div class="modal fade" id="depAdd" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                  <h3 class="modal-title">Add department</h3>
+                  <button  type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+             <div class="modal-body">
+                <p class="text-muted" style="font-size:20px">Department id:</p>
+                <input style="font-size: 15px;" class="form-control" #Departmentid type="number" />
+                <br>
+                <p class="text-muted" style="font-size:20px">Department name:</p>
+                <input style="font-size: 15px;" #DepartmentName type="text"  class="form-control"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">Department location:</p>
+                <input style="font-size: 15px;" #DepLoc type="text"  class="form-control" />
+                <br>
+                <p class="text-muted" style="font-size:20px">Employees:</p>
+                <!-- <select #employees type="text" >
+                  <option *ngFor="let item of employees" [value]="item.emp_firstName">
+                    {{item.emp_firstName}
+                  </option> -->
+                  <!-- <select #employees type="text">
+                    <option *ngFor="let item of employees" [value]="item.emp_firstName">
+                      {{item.emp_firstName}}
+                    </option>
+                </select> -->
+                  <select  style="font-size: 15px;" #emp type="text" class="form-control">
+                  <option *ngFor="let item of employees" [value]="item.emp_firstName"  >
+                    {{item.emp_firstName}}
+                  </option>
+                </select> 
+                <!-- <input #emp type="text"/>              -->
+                <div class="modal-footer">
+                  <button type="button"   (click)="addDep(Departmentid.value,DepartmentName.value, emp.value, DepLoc.value)" style="width: 150px;text-align: center; "class="btn btn-success" data-dismiss="modal">Add</button>
+              </div>
+           </div>
+        </div>
+    </div>
+</div>
+      <!--Modal Details-->
+<div class="modal fade" id="DepDetail" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);" >
+  <div class="modal-dialog">
+      <div class="modal-content">       
+           <div class="modal-body" *ngIf="selectedDepartment">
+            <div class="modal-header">
+              <h4 class="modal-title"></h4>
+                <button mat-button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2  style="font-size:20px; margin-left: 0px; margin-top: 0px;">{{selectedDepartment.department_name}} details</h2>
+            </div>              
+                  <p class="text-muted" style="font-size:20px;margin-top: 10px;">Department id:</p>
+                  <input style="font-size: 15px;"class="form-control" #editedD_id type="number"[(ngModel)]="selectedDepartment.department_id" placeholder="Department id"/>
+                  <br>
+                  <p class="text-muted" style="font-size:20px">Department name:</p>
+                  <input style="font-size: 15px;" class="form-control" #editedD_name type="text"[(ngModel)]="selectedDepartment.department_name" placeholder="Department name"/>
+                  <br>
+                  <p class="text-muted" style="font-size:20px">Department location:</p>
+                  <input style="font-size: 15px;" class="form-control" #editedD_location type="text"[(ngModel)]="selectedDepartment.department_location" placeholder="Department location"/>
+                  <br>
+                  <p class="text-muted" style="font-size:20px">Employees:</p>
+                  <select style="font-size: 15px;" #editedD_employees type="text" [(ngModel)]="selectedDepartment.employees" class="form-control">
+                    <option *ngFor="let item of employees" [value]="item.emp_firstName">
+                      {{item.emp_firstName}}
+                    </option>
+                  </select>      
+                <div class="modal-footer">                
+                    <button  type="button" (click)="editDep(editedD_id.value, editedD_name.value, editedD_location.value, editedD_employees.value)" style="width: 150px;text-align: center;" class="btn btn-success" data-dismiss="modal">Submit</button>                        
+              </div>
+          </div>
+        </div>
+    </div>
+</div>

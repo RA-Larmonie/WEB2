@@ -1,0 +1,153 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<div class="emp_container">
+    <!--Table header-->
+    <table class="headerTable">
+        <tr>
+            <td><h2>Employees</h2></td>
+            <!--Add function-->
+            <div class="button-add">
+                <td><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#empAdd">+</button></td>
+            </div>  
+            <!--Search function-->         
+            <td>
+                <div class="form-group has-feedback has-search" style="margin-top: 15px;">
+                    <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                    <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off" placeholder="&#61442;  Searching for employee  by name"/>
+                </div>     
+            </td>
+        </tr>
+    </table>
+    <!-- table employess-->
+    <table class="table">
+        <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Update/Details</th>
+              <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody *ngFor="let employee of employees | filter:searchText">
+            <th class="row-table" scope="row">{{employee.emp_id}}</th>
+            <td class="row-table">{{employee.emp_firstName}}</td>
+            <td class="row-table">{{employee.emp_lastName}}</td>
+            <td class="row-table"><button class="btn btn-light btn-outline-dark" data-toggle="modal" data-target="#empDetail"
+                [class.selected]="employee === selectedEmp" 
+                (click)="empSelect(employee)">Edit/Details</button></td>
+                <!--Remove-->
+            <td><button (click)="removeEmployee(employee.emp_id);" class="btn btn-light btn-outline-dark"><i class="glyphicon glyphicon-trash"></i></button></td>
+        </tbody>
+    </table>
+</div>
+<!-- Modal add-->
+<div class="modal fade" id="empAdd" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Employee</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted" style="font-size:20px">ID:</p>
+                <input style="font-size: 15px;" class="form-control" type="text" disabled [value] = "getNewID()"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">First Name:</p>
+                <input style="font-size: 15px;" class="form-control" #firstName type="text"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">Last Name:</p>
+                <input style="font-size: 15px;" class="form-control" #lastName type="text"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">Gender:</p>
+                <select #gender style="font-size: 15px;" class="form-control">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <br>
+                <p class="text-muted" style="font-size:20px">Birthday:</p>
+                <input style="font-size: 15px;" class="form-control" #birthDay type="date"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">Email:</p>
+                <input style="font-size: 15px;" class="form-control" #email type="email"/>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button (click)="addEmployee(firstName.value,lastName.value,gender.value,birthDay.value,email.value)" type="button"  style="width: 150px;text-align: center; "class="btn btn-success" data-dismiss="modal">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Detail-->
+<div class="modal fade" id="empDetail" role="dialog" data-backdrop="false" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body" *ngIf="selectedEmp">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2  style="font-size:20px; margin-left: 0px; margin-top: 0px;"> Details</h2>
+                </div>
+                <p class="text-muted" style="font-size:20px">ID:</p>
+                <input style="font-size: 15px;" class="form-control" type="text" [(ngModel)]="selectedEmp.emp_id"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">First Name:</p>
+                <input style="font-size: 15px;" class="form-control" type="text" [(ngModel)]="selectedEmp.emp_firstName"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">Last Name:</p>
+                <input style="font-size: 15px;" class="form-control" type="text" [(ngModel)]="selectedEmp.emp_lastName"/>
+                <br>
+                <br>
+                <p class="text-muted" style="font-size:20px">Gender:</p>
+                <div *ngIf="selectedEmp.emp_gender == 'Male'">
+                    <select [(ngModel)]="selectedEmp.emp_gender" style="font-size: 15px;" class="form-control">
+                        <option value="Male" selected>Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div *ngIf="selectedEmp.emp_gender == 'Female'">
+                    <select [(ngModel)]="selectedEmp.emp_gender" style="font-size: 15px;" class="form-control">
+                        <option value="Male">Male</option>
+                        <option value="Female" selected>Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div *ngIf="selectedEmp.emp_gender == 'Other'">
+                    <select [(ngModel)]="selectedEmp.emp_gender" style="font-size: 15px;" class="form-control">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other" selected>Other</option>
+                    </select>
+                </div>
+                <br>
+                <p class="text-muted" style="font-size:20px">Birthday (mm/dd/yyyy):</p>
+                <input style="font-size: 15px;" class="form-control" type="date" [ngModel] ="selectedEmp.emp_birthDay | date:'yyyy-MM-dd'" (ngModelChange)="selectedEmp.emp_birthDay = $event">
+                <br>
+                <p class="text-muted" style="font-size:20px">Email:</p>
+                <input style="font-size: 15px;" class="form-control" [(ngModel)]="selectedEmp.emp_email"/>
+                <br>
+                <p class="text-muted" style="font-size:20px">Role:</p>
+                <!-- <p >{{selectedEmp.emp_role}}</p> -->
+                <select type="text" [(ngModel)]="selectedEmp.emp_role" style="font-size: 15px;" class="form-control">
+                    <option *ngFor="let role of roles" [value]="role.name">
+                        {{role.name}}
+                    </option>
+                </select>
+                <br>
+                <p class="text-muted" style="font-size:20px">Department:</p>
+                <select type="text" [(ngModel)]="selectedEmp.emp_department" style="font-size: 15px;" class="form-control">
+                    <option *ngFor="let item of departments" [value]="item.department_name">
+                        {{item.department_name}}
+                    </option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" style="width: 150px;text-align: center;" class="btn btn-success" data-dismiss="modal">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
